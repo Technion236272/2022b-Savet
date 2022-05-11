@@ -1,26 +1,47 @@
 // @dart=2.9
 
 import 'dart:async';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'auth/login_page.dart';
+import 'auth/auth_repoitory.dart';
 import 'package:flutter/src/services/asset_bundle.dart';
 import 'package:flutter/src/painting/image_provider.dart';
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  //create: (context) => AuthRepository.instance();,
+
+  runApp(
+      ChangeNotifierProvider(
+          create: (context) => AuthRepository.instance(),
+          child: MyApp()
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Savet',
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-      ),
-      home: Splash2(),
-      debugShowCheckedModeBanner: false,
+    return FutureBuilder(
+      future: _initialization,
+        builder:  (context,snapshot){
+
+          return MaterialApp(
+            title: 'Savet',
+            theme: ThemeData(
+              primarySwatch: Colors.deepOrange,
+            ),
+            home: Splash2(),
+            debugShowCheckedModeBanner: false,
+          );
+    }
     );
   }
 }

@@ -1,6 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
-
+import 'auth_repoitory.dart';
+import 'package:provider/provider.dart';
+import 'Home.dart';
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -13,43 +15,48 @@ class _LoginState extends State<Login> {
   TextEditingController _password =new TextEditingController();
   TextEditingController _email = new TextEditingController();
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _email = TextEditingController(text: "");
-  //   _password = TextEditingController(text: "");
-  //   print("Login in");
-  // }
+  @override
+  void initState() {
+    super.initState();
+    AuthRepository.instance();
+    _email = TextEditingController(text: "");
+    _password = TextEditingController(text: "");
+    print("Login in");
+  }
 
-  // Future<FirebaseApp> _initializeFirebase() async{
-  //   FirebaseApp firebaseApp = await Firebase.initializeApp();
-  //   return firebaseApp;
-  // }
+  Future<FirebaseApp> _initializeFirebase() async{
+    FirebaseApp firebaseApp = await Firebase.initializeApp();
+    return firebaseApp;
+  }
 
 
   @override
   Widget build(BuildContext context) {
-   // final user = Provider.of<AuthRepository>(context);
     return Scaffold(
-        appBar: AppBar(title: Text('Login'),centerTitle:true),
+        appBar: AppBar(
+            title: Text('Login'),centerTitle:true,
+          automaticallyImplyLeading: false,
+
+        ),
         body: FutureBuilder(
-          //future: _initializeFirebase(),
+          future: _initializeFirebase(),
           builder: (context, snapshot){
             return LoginScreen();
 
-            // if(snapshot.connectionState == ConnectionState.done){
-            // }
-            // return const Center(
-            //   child: CircularProgressIndicator(),
-            // );
+            if(snapshot.connectionState == ConnectionState.done){
+            }
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           },
         )
     );
   }
 
   Widget LoginScreen(){
-
-    //final user = Provider.of<AuthRepository>(context);
+    final user = Provider.of<AuthRepository>(context);
+    // if(user.isAuthenticated)
+    //   user.signOut();
     return SingleChildScrollView(
       child: Center(
           child: SizedBox(
@@ -96,9 +103,9 @@ class _LoginState extends State<Login> {
                 ),
 
                 const Text(''),
-                // //user.status==Status.Authenticating ? const Center(
-                //   child: CircularProgressIndicator(),
-                // ) :
+                user.status==Status.Authenticating ? const Center(
+                  child: CircularProgressIndicator(),
+                ) :
                 Container(
                   height: 40,
                   width: 350,
@@ -106,12 +113,13 @@ class _LoginState extends State<Login> {
                     child: const Text('Log in',style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                     onPressed: () async {
-                      // await user.signIn(_email.text, _password.text);
-                      // (user.isAuthenticated) ?
-                      // Navigator.pop(context)
-                      //     :
+                      await user.signIn(_email.text, _password.text);
+                      (user.isAuthenticated) ?
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')))
+                          :
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('Not implemented yet')));
+                          content: Text('Error to Log in')));
                     },
                   ),
 
