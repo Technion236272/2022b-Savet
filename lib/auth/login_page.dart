@@ -1,8 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:savet/auth/Register.dart';
+import 'ResetPassword.dart';
 import 'auth_repoitory.dart';
 import 'package:provider/provider.dart';
 import 'Home.dart';
+import 'Register.dart';
+import 'package:flutter/gestures.dart';
+
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -34,7 +39,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text('Login'),centerTitle:true,
+            title: Text('Login'),centerTitle:false,
           automaticallyImplyLeading: false,
 
         ),
@@ -70,12 +75,16 @@ class _LoginState extends State<Login> {
                 Padding(
                   //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
                   padding:  EdgeInsets.symmetric(horizontal: 15),
-                  child: TextField(
+                  child:Material(
+                    elevation: 3,
+                    shadowColor: Colors.black,
+                    child:TextField(
                     controller: _email,
                     decoration:  const InputDecoration(
                         contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
                         labelText: 'Email',
-
+                      fillColor: Colors.black12,
+                      filled: true,
                       prefixIcon: Icon(Icons.email),
                         hintText: 'Please enter your Email',
                       border: OutlineInputBorder(),
@@ -83,11 +92,14 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 ),
+                ),
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 15.0, right: 15.0, top: 15, bottom: 0),
-                  child:
-                  TextField(
+                  child:Material(
+                    elevation: 3,
+                    shadowColor: Colors.black,
+                  child: TextField(
                     controller: _password,
                     obscureText: true,
                     decoration:  const InputDecoration(
@@ -95,11 +107,27 @@ class _LoginState extends State<Login> {
                         labelText: 'Password',
                       prefixIcon: Icon(Icons.lock),
                         hintText: 'Enter your password',
+                      fillColor: Colors.black12,
+                      filled: true,
                       border: OutlineInputBorder(),
 
                     ),
-
                   ),
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 215.0),
+                  child:TextButton(
+                    child: Text("forget password?"),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ResetPassword()));
+
+                    }
+                  )
                 ),
 
                 const Text(''),
@@ -127,6 +155,57 @@ class _LoginState extends State<Login> {
                       color: Colors.deepOrange, borderRadius: BorderRadius.circular(20)
 
                   ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(left:15.0,right: 15.0),
+                  //padding:  EdgeInsets.symmetric(horizontal: 15),
+                    child:TextButton(
+                        child: const Text("Login as a guest", style: TextStyle(color: Colors.black54),),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')));
+
+                        }
+                    )
+                ),
+
+
+                //Register
+                Padding(
+                    padding: const EdgeInsets.only(left:15.0,right: 15.0),
+                    //padding:  EdgeInsets.symmetric(horizontal: 15),
+
+                  child: RichText(
+                text:  TextSpan(
+                // Note: Styles for TextSpans must be explicitly defined.
+                // Child text spans will inherit styles from parent
+                style: const TextStyle(
+                  fontSize: 14.0,
+                  color: Colors.black,
+                ),
+            children: [
+              const TextSpan(text: "Don't have an account ? ",style: TextStyle(color: Colors.black)),
+              TextSpan(text: 'Register', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange),
+                  recognizer: TapGestureRecognizer()..onTap = () {
+                   print('Register Tap');
+                    setState(() {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Register()));
+                    });
+
+                     }
+
+              ),
+
+
+
+            ],
+          ),
+
+                ),
                 ),
               ],
             ),

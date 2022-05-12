@@ -63,6 +63,12 @@ class AuthRepository with ChangeNotifier {
     return Future.delayed(Duration.zero);
   }
 
+  Future resetPassword() async {
+
+    print("resetPassword");
+    notifyListeners();
+    return Future.delayed(Duration.zero);
+  }
   Future<void> _onAuthStateChanged(User? firebaseUser) async {
     if (firebaseUser == null) {
       _user = null;
