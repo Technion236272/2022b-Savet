@@ -7,6 +7,11 @@ import 'package:provider/provider.dart';
 import 'Home.dart';
 import 'Register.dart';
 import 'package:flutter/gestures.dart';
+import 'dart:async';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -65,7 +70,8 @@ class _LoginState extends State<Login> {
     return SingleChildScrollView(
       child: Center(
           child: SizedBox(
-            width: 350,
+           // width:  height: MediaQuery.of(context).size.width*0.1,
+          width: MediaQuery.of(context).size.width*0.9,
             child: Column(
               children: <Widget>[
                 SizedBox(height: 20),
@@ -135,8 +141,8 @@ class _LoginState extends State<Login> {
                   child: CircularProgressIndicator(),
                 ) :
                 Container(
-                  height: 40,
-                  width: 350,
+                  height: MediaQuery.of(context).size.width*0.1,
+                  width: MediaQuery.of(context).size.width,
                   child: TextButton(
                     child: const Text('Log in',style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
@@ -170,6 +176,9 @@ class _LoginState extends State<Login> {
                         }
                     )
                 ),
+
+
+                //      image: Image.asset("assets/image/splash.png"),
 
 
                 //Register

@@ -1,10 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'ResetPassword.dart';
 import 'auth_repoitory.dart';
 import 'package:provider/provider.dart';
 import 'Home.dart';
-import 'package:flutter/gestures.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -56,7 +54,8 @@ class _RegisterState extends State<Register> {
     return SingleChildScrollView(
       child: Center(
           child: SizedBox(
-            width: 350,
+           // width:  height: MediaQuery.of(context).size.width*0.1,
+          width: MediaQuery.of(context).size.width*0.9,
             child: Column(
               children: <Widget>[
                 SizedBox(height: 20),
@@ -151,32 +150,37 @@ class _RegisterState extends State<Register> {
 
                 const Text(''),
                 const Text(''),
-              ElevatedButton(
-                  child: Container(child: Text('Confirm'),
-                    decoration: BoxDecoration(
-                        color: Colors.deepOrange, borderRadius: BorderRadius.circular(20)
 
+                user.status==Status.Authenticating ? const Center(
+                  child: CircularProgressIndicator(),
+                ) :
+                Container(
+                  height: MediaQuery.of(context).size.width*0.1,
+                  width: MediaQuery.of(context).size.width,
+
+                  child: TextButton(
+                    child: const Text('Confirm',style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
-                  ),
-
-                  onPressed: () async {
-                    _password.text ==_confirmpassword.text && _password.text !='' && _confirmpassword.text !=''? {
-                      await user.signUp(_email.text,_password.text),
+           onPressed: () async {
+          _password.text ==_confirmpassword.text && _password.text !='' && _confirmpassword.text !=''? {
+            await user.signUp(_email.text,_password.text),
                     print('Register is done'),
-                    setState(() {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const MyHomePage(title: "title")));
-                    })
-                    } : {
                       setState(() {
-                        Navigator.pop(context);
-                      }),
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text(('Passwords must match'))))
-                    };
+                      Navigator.push(
+                    context,
+                        MaterialPageRoute(builder: (context) => const MyHomePage(title: "title")));
+                      })
+                      } : {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text(('Passwords must match'))))
+                  };
                   }
               ),
+                  decoration: BoxDecoration(
+                      color: Colors.deepOrange, borderRadius: BorderRadius.circular(20)
+
+                  ),
+                ),
 
               ],
             ),

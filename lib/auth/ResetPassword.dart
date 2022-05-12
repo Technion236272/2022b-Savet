@@ -58,7 +58,7 @@ class _ResetPasswordState extends State<ResetPassword> {
     return SingleChildScrollView(
       child: Center(
           child: SizedBox(
-            width: 350,
+          width: MediaQuery.of(context).size.width*0.9,
             child: Column(
               children: <Widget>[
                 SizedBox(height: 20),
@@ -92,14 +92,14 @@ class _ResetPasswordState extends State<ResetPassword> {
                 user.status==Status.Authenticating ? const Center(
                   child: CircularProgressIndicator(),
                 ) :
+                    //width: MediaQuery.of(context).size.width * 0.55,
                 Container(
-                  height: 40,
-                  width: 350,
+                  height: MediaQuery.of(context).size.width*0.1,
+                  width: MediaQuery.of(context).size.width,
                   child: TextButton(
-                    child: const Text('Log in',style: TextStyle(fontSize: 20, color: Colors.white),
+                    child: const Text('Send to email',style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                     onPressed: () async {
-                    //  await user.signIn(_email.text, _password.text);
                       (user.isAuthenticated) ?
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')))
