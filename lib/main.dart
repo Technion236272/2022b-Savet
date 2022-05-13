@@ -9,6 +9,7 @@ import 'auth/login_page.dart';
 import 'auth/auth_repoitory.dart';
 import 'package:flutter/src/services/asset_bundle.dart';
 import 'package:flutter/src/painting/image_provider.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,6 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(

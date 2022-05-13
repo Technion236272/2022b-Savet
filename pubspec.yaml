@@ -41,6 +41,7 @@ dependencies:
   firebase_auth: ^3.3.17
   provider: ^6.0.2
   gestures: ^1.0.0
+  flutter_facebook_auth: ^3.5.6
 
 
 
@@ -66,6 +67,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/image/splash.png
+    - assets/image/google.png
+    - assets/image/facebook.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

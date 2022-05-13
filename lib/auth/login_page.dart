@@ -8,10 +8,11 @@ import 'Home.dart';
 import 'Register.dart';
 import 'package:flutter/gestures.dart';
 import 'dart:async';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter/src/painting/image_provider.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -21,6 +22,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
+  //final AccessToken _accessToken;
+
   TextStyle style = const TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   TextEditingController _password =new TextEditingController();
   TextEditingController _email = new TextEditingController();
@@ -178,12 +182,47 @@ class _LoginState extends State<Login> {
                 ),
 
 
-                //      image: Image.asset("assets/image/splash.png"),
+                Padding(
+                  padding: const EdgeInsets.only(left:15.0,right: 15.0,top:80.0),
+                  //padding:  EdgeInsets.symmetric(horizontal: 15),
 
+                  child: Row(
+                      children: <Widget> [
+                        Expanded(
+                          flex: 1,
+                          child: FlatButton(
+                            onPressed: () {
+                                   Navigator.push(
+                                       context,
+                                     MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')));
+                                  },
+                            child: Image.asset('assets/image/facebook.png'
+                            ,height: 70,width: 70,
+                            ),
+                          ),
+                        ),
+
+                        Expanded(
+                          flex:1,
+                          child: FlatButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')));
+
+                            },
+                            child:  Image.asset('assets/image/google.png'
+                              ,height: 100,width: 100,
+                            ),
+                          ),
+                        ),
+                      ]
+                  ),
+                ),
 
                 //Register
                 Padding(
-                    padding: const EdgeInsets.only(left:15.0,right: 15.0),
+                    padding: const EdgeInsets.only(left:15.0,right: 15.0,top: 150),
                     //padding:  EdgeInsets.symmetric(horizontal: 15),
 
                   child: RichText(
@@ -208,14 +247,13 @@ class _LoginState extends State<Login> {
                      }
 
               ),
-
-
-
             ],
           ),
 
                 ),
                 ),
+
+
               ],
             ),
           )
