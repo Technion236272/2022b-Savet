@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:savet/auth/Register.dart';
@@ -13,7 +14,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/src/painting/image_provider.dart';
-
+import 'facebookLogin.dart';
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -22,9 +23,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
-  //final AccessToken _accessToken;
-
+  AccessToken? _accessToken;
+  UserModel? _currentUser;
   TextStyle style = const TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   TextEditingController _password =new TextEditingController();
   TextEditingController _email = new TextEditingController();
@@ -56,12 +56,6 @@ class _LoginState extends State<Login> {
           future: _initializeFirebase(),
           builder: (context, snapshot){
             return LoginScreen();
-
-            if(snapshot.connectionState == ConnectionState.done){
-            }
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
           },
         )
     );
@@ -69,204 +63,317 @@ class _LoginState extends State<Login> {
 
   Widget LoginScreen(){
     final user = Provider.of<AuthRepository>(context);
+    UserModel? userModel = _currentUser;
     // if(user.isAuthenticated)
     //   user.signOut();
-    return SingleChildScrollView(
-      child: Center(
-          child: SizedBox(
-           // width:  height: MediaQuery.of(context).size.width*0.1,
-          width: MediaQuery.of(context).size.width*0.9,
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 20),
-                const Text(''),
-                const SizedBox(height: 20),
+    if(userModel != null){
+      return Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+             ListTile(
+              leading: CircleAvatar(
+                  radius: userModel.picture!.width! / 6,
+                  backgroundImage: NetworkImage(userModel.picture!.url!)
+                ,
+              ),
+               title: Text(userModel.name!),
+               subtitle: Text(userModel.email!),
+            ),
+            const SizedBox(height: 20),
+            const Text('sign in successfully',
+              style: TextStyle(fontSize: 20)
+            ),
 
-                Padding(
-                  //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
-                  padding:  EdgeInsets.symmetric(horizontal: 15),
-                  child:Material(
-                    elevation: 3,
-                    shadowColor: Colors.black,
-                    child:TextField(
-                    controller: _email,
-                    decoration:  const InputDecoration(
-                        contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
-                        labelText: 'Email',
-                      fillColor: Colors.black12,
-                      filled: true,
-                      prefixIcon: Icon(Icons.email),
-                        hintText: 'Please enter your Email',
-                      border: OutlineInputBorder(),
+            const SizedBox(height: 10,),
+            ElevatedButton(onPressed: signOutFace, child: Text('sign out'))
 
-                    ),
-                  ),
-                ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 15.0, right: 15.0, top: 15, bottom: 0),
-                  child:Material(
-                    elevation: 3,
-                    shadowColor: Colors.black,
-                  child: TextField(
-                    controller: _password,
-                    obscureText: true,
-                    decoration:  const InputDecoration(
-                        contentPadding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
-                        labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock),
-                        hintText: 'Enter your password',
-                      fillColor: Colors.black12,
-                      filled: true,
-                      border: OutlineInputBorder(),
+          ],
+        ),
+      );
+    }else {
+      return SingleChildScrollView(
+        child: Center(
+            child: SizedBox(
+              // width:  height: MediaQuery.of(context).size.width*0.1,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width * 0.9,
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 20),
+                  const Text(''),
+                  const SizedBox(height: 20),
 
-                    ),
-                  ),
-                  ),
-                ),
+                  Padding(
+                    //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Material(
+                      elevation: 3,
+                      shadowColor: Colors.black,
+                      child: TextField(
+                        controller: _email,
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(
+                              25.0, 15.0, 20.0, 15.0),
+                          labelText: 'Email',
+                          fillColor: Colors.black12,
+                          filled: true,
+                          prefixIcon: Icon(Icons.email),
+                          hintText: 'Please enter your Email',
+                          border: OutlineInputBorder(),
 
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 215.0),
-                  child:TextButton(
-                    child: Text("forget password?"),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const ResetPassword()));
-
-                    }
-                  )
-                ),
-
-                const Text(''),
-                user.status==Status.Authenticating ? const Center(
-                  child: CircularProgressIndicator(),
-                ) :
-                Container(
-                  height: MediaQuery.of(context).size.width*0.1,
-                  width: MediaQuery.of(context).size.width,
-                  child: TextButton(
-                    child: const Text('Log in',style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
-                    onPressed: () async {
-                      await user.signIn(_email.text, _password.text);
-                      (user.isAuthenticated) ?
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')))
-                          :
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('Error to Log in')));
-                    },
-                  ),
-
-                  decoration: BoxDecoration(
-                      color: Colors.deepOrange, borderRadius: BorderRadius.circular(20)
-
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(left:15.0,right: 15.0),
-                  //padding:  EdgeInsets.symmetric(horizontal: 15),
-                    child:TextButton(
-                        child: const Text("Login as a guest", style: TextStyle(color: Colors.black54),),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')));
-
-                        }
-                    )
-                ),
-
-
-                Padding(
-                  padding: const EdgeInsets.only(left:15.0,right: 15.0,top:80.0),
-                  //padding:  EdgeInsets.symmetric(horizontal: 15),
-
-                  child: Row(
-                      children: <Widget> [
-                        Expanded(
-                          flex: 1,
-                          child: FlatButton(
-                            onPressed: () {
-                                   Navigator.push(
-                                       context,
-                                     MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')));
-                                  },
-                            child: Image.asset('assets/image/facebook.png'
-                            ,height: 70,width: 70,
-                            ),
-                          ),
                         ),
-
-                        Expanded(
-                          flex:1,
-                          child: FlatButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')));
-
-                            },
-                            child:  Image.asset('assets/image/google.png'
-                              ,height: 100,width: 100,
-                            ),
-                          ),
-                        ),
-                      ]
+                      ),
+                    ),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 15.0, right: 15.0, top: 15, bottom: 0),
+                    child: Material(
+                      elevation: 3,
+                      shadowColor: Colors.black,
+                      child: TextField(
+                        controller: _password,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(
+                              25.0, 15.0, 20.0, 15.0),
+                          labelText: 'Password',
+                          prefixIcon: Icon(Icons.lock),
+                          hintText: 'Enter your password',
+                          fillColor: Colors.black12,
+                          filled: true,
+                          border: OutlineInputBorder(),
 
-                //Register
-                Padding(
-                    padding: const EdgeInsets.only(left:15.0,right: 15.0,top: 150),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  Padding(
+                      padding: const EdgeInsets.only(
+                          left: 215.0),
+                      child: TextButton(
+                          child: Text("forget password?"),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (
+                                    context) => const ResetPassword()));
+                          }
+                      )
+                  ),
+
+                  const Text(''),
+                  user.status == Status.Authenticating ? const Center(
+                    child: CircularProgressIndicator(),
+                  ) :
+                  Container(
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.1,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
+                    child: TextButton(
+                      child: const Text('Log in',
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        await user.signIn(_email.text, _password.text);
+                        (user.isAuthenticated) ?
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) =>
+                            const MyHomePage(title: 'Flutter Demo Home Page')))
+                            :
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Error to Log in')));
+                      },
+                    ),
+
+                    decoration: BoxDecoration(
+                        color: Colors.deepOrange,
+                        borderRadius: BorderRadius.circular(20)
+
+                    ),
+                  ),
+
+                  Padding(
+                      padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                      //padding:  EdgeInsets.symmetric(horizontal: 15),
+                      child: TextButton(
+                          child: const Text("Login as a guest",
+                            style: TextStyle(color: Colors.black54),),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) =>
+                                const MyHomePage(
+                                    title: 'Flutter Demo Home Page')));
+                          }
+                      )
+                  ),
+
+
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 15.0, right: 15.0, top: 80.0),
+                    child: Row(
+                        children: <Widget>[
+                          Expanded(
+                              flex: 1,
+                              child: GestureDetector(
+                                onTap: loginFace,
+                                child: Image.asset(
+                                  'assets/image/facebook.png',
+                                  width: 80,
+                                  height: 80,
+                                ),
+                              )
+                          ),
+                          Expanded(
+                              flex: 1,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) =>
+                                      const MyHomePage(
+                                          title: 'Flutter Demo Home Page')));
+                                }, // Image tapped
+                                child: Image.asset(
+                                  'assets/image/google.png',
+                                  width: 100,
+                                  height: 100,
+                                ),
+                              )
+                          ),
+
+                        ]
+                    ),
+                  ),
+
+                  //Register
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 15.0, right: 15.0, top: 120),
                     //padding:  EdgeInsets.symmetric(horizontal: 15),
 
-                  child: RichText(
-                text:  TextSpan(
-                // Note: Styles for TextSpans must be explicitly defined.
-                // Child text spans will inherit styles from parent
-                style: const TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.black,
-                ),
-            children: [
-              const TextSpan(text: "Don't have an account ? ",style: TextStyle(color: Colors.black)),
-              TextSpan(text: 'Register', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange),
-                  recognizer: TapGestureRecognizer()..onTap = () {
-                   print('Register Tap');
-                    setState(() {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const Register()));
-                    });
+                    child: RichText(
+                      text: TextSpan(
+                        // Note: Styles for TextSpans must be explicitly defined.
+                        // Child text spans will inherit styles from parent
+                        style: const TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.black,
+                        ),
+                        children: [
+                          const TextSpan(text: "Don't have an account ? ",
+                              style: TextStyle(color: Colors.black)),
+                          TextSpan(text: 'Register',
+                              style: const TextStyle(fontWeight: FontWeight.bold,
+                                  color: Colors.deepOrange),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  print('Register Tap');
+                                  setState(() {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (
+                                            context) => const Register()));
+                                  });
+                                }
 
-                     }
+                          ),
+                        ],
+                      ),
 
+                    ),
+                  ),
+
+
+                ],
               ),
-            ],
-          ),
-
-                ),
-                ),
-
-
-              ],
-            ),
-          )
-      ),
-    );
+            )
+        ),
+      );
+    }
   }
 
-// @override
-// void dispose() {
-//   print("Login Out");
-//   _email.dispose();
-//   _password.dispose();
-//   super.dispose();
-// }
+  Future<void> loginFace() async {
+    final LoginResult login_res = await FacebookAuth.i.login();
+    if(login_res.status == LoginStatus.success){
+      _accessToken = login_res.accessToken;
+      final data = await FacebookAuth.i.getUserData();
+      UserModel model  = UserModel.fromJson(data);
+      final facebook = FacebookAuthProvider.credential(login_res.accessToken!.token);
+      await FirebaseAuth.instance.signInWithCredential(facebook);
+      //await FirebaseFiretore.instance.
+      _currentUser = model;
+      setState(() {
+
+      });
+    }
+  }
+
+  Future<void> signOutFace() async{
+      await FacebookAuth.i.logOut();
+      _currentUser = null;
+      _accessToken = null;
+      setState(() {
+
+      });
+  }
+}
+
+
+class PictureModel{
+  final String? url;
+  final int? height;
+  final int? width;
+
+  const PictureModel({this.width, this.height,this.url});
+  factory PictureModel.fromJson(Map<String,dynamic> json) =>
+      PictureModel(url: json['url'], width: json['width'],height: json['height']);
 
 }
+
+
+class UserModel{
+  final String? name;
+  final String? id;
+  final String? email;
+  final PictureModel? picture;
+  const UserModel({this.name, this.picture,this.email,this.id
+  });
+  factory UserModel.fromJson(Map<String,dynamic> json) =>
+      UserModel(
+      email: json['email'],
+      id: json['id'] as String?,
+      name: json['name'],
+      picture: PictureModel.fromJson(json['picture']['data'])
+      );
+/*
+  {
+ {
+  "id": "USER-ID",
+  "name": "EXAMPLE NAME",
+  "email": "EXAMPLE@EMAIL.COM",
+  "picture": {
+    "data": {
+      "height": 50,
+      "is_silhouette": false,
+      "url": "URL-FOR-USER-PROFILE-PICTURE",
+      "width": 50
+    }
+  }
+}
+   */
+
+}
+

@@ -48,15 +48,19 @@ class MyApp extends StatelessWidget {
 class Splash2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SplashScreen(
-      seconds: 6,
-      navigateAfterSeconds: new Login(),
-      title: new Text('Savet',textScaleFactor: 2,style: TextStyle(color: Colors.white),),
-      image: Image.asset("assets/image/splash.png"),
-      backgroundColor: Colors.deepOrange,
-      loadingText: Text("Loading",style: TextStyle(color: Colors.white),),
-      photoSize: 100.0,
-      loaderColor: Colors.white,
+    return Container(
+      //alignment: Alignment.bottomCenter,
+      child: SplashScreen(
+        seconds: 2,
+        //useLoader: false,
+        navigateAfterSeconds: new Login(),
+        title: new Text('',textScaleFactor: 2,style: TextStyle(color: Colors.white),),
+        image: Image.asset("assets/image/splash.png"),
+        backgroundColor: Colors.deepOrange,
+        //loadingText: Text(''),
+        photoSize: 100.0,
+        loaderColor: Colors.white,
+      ),
     );
   }
 }

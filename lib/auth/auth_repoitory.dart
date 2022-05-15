@@ -45,6 +45,7 @@ class AuthRepository with ChangeNotifier {
     }
   }
   Future<bool> signIn(String email, String password) async {
+    //_auth.signIn("facebook", )
     try {
       _status = Status.Authenticating;
       notifyListeners();
