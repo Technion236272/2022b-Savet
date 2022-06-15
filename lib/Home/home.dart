@@ -40,8 +40,6 @@ class _homeState extends State<home> {
       return InkWell(
         key: Key('$i'),
         onTap: () {
-          print("home");
-          print(cat['id']);
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => category(id: cat['id'])));
         },

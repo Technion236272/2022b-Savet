@@ -42,7 +42,6 @@ class _categoryState extends State<category> {
     var pWrap = pathWrapper(cat['image']);
     var t = cat['title'];
     TextEditingController _cont = TextEditingController();
-
     return Scaffold(
         appBar: AppBar(
           title: Text(t),
