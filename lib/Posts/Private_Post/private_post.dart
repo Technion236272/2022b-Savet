@@ -52,6 +52,9 @@ class _private_postState extends State<private_post> {
       print(e['id']);
       if (e['id'] == widget.post_id) {
         post = e;
+        Timestamp te = e['reminder'];
+        widget.date =
+            DateTime.fromMicrosecondsSinceEpoch(te.microsecondsSinceEpoch);
         break;
       }
     }
@@ -75,21 +78,6 @@ class _private_postState extends State<private_post> {
                                         )));
                           },
                           child: Text("Edit"),
-                          //prefixIcon: Icon(Icons.add_alert),
-                          // child: Container(
-                          //   decoration: BoxDecoration(),
-                          //   child: Center(
-                          //     child: Text(
-                          //       'Edit',
-                          //       style: TextStyle(
-                          //         fontFamily: 'Arial',
-                          //         fontSize: 18,
-                          //         color: Colors.deepOrange,
-                          //       ),
-                          //       textAlign: TextAlign.center,
-                          //     ),
-                          //   ),
-                          // ),
                         ),
                       ),
                       PopupMenuItem(
@@ -101,16 +89,33 @@ class _private_postState extends State<private_post> {
                                     initialDate: widget.date ?? DateTime.now(),
                                     firstDate: DateTime.now(),
                                     lastDate: DateTime(2050))
-                                .then((value) {
-                              Provider.of<UserDB>(context, listen: false)
-                                  .changeDate(
-                                      Timestamp.fromDate(DateTime.now()),
-                                      widget.post_id);
+                                .then((value) async {
+                              if (value != null) {
+                                var time = await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now());
+                                time ??= TimeOfDay.now();
+                                // var input = DateFormat('MM/dd/yyyy, hh:mm a')
+                                //     .parse('12/31/2000, 10:00 PM');
+                                // var output = DateFormat('dd/MM/yyyy, HH:mm')
+                                //     .format(input);
+                                // Timestamp te = DateFormat('MM/dd/yyyy, hh:mm a')
+                                //     .parse('$value,$time') as Timestamp;
+                                //print(te);
+                                // var datetime = DateFormat('d.M.yyyy , HH:mm')
+                                //     .parse(value.toString());
+                                // print(datetime);
+                                Provider.of<UserDB>(context, listen: false)
+                                    .changeDate(widget.cat_id, widget.post_id,
+                                        Timestamp.fromDate(value), time);
 
-                              print(value);
-
-                              if (value != null) widget.date = value;
+                                setState(() {
+                                  widget.date = value;
+                                });
+                                print(value);
+                              }
                             });
+                            Navigator.pop(context);
                           },
                           //prefixIcon: Icon(Icons.add_alert),
                           child: Text(

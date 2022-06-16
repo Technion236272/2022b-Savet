@@ -539,15 +539,27 @@ class UserDB extends ChangeNotifier {
     return userData;
   }
 
-  //TODO: change date
-  void changeDate(Timestamp t, int id) async {
+  // void changeDate(Timestamp t, int id) async {
+  //   var s = FirebaseFirestore.instance.collection('users').doc(user_email);
+  //   DocumentSnapshot userSnapshot = await s.get();
+  //   var userData = userSnapshot.data() as Map;
+  //   var posts = userData['categories'][2]['posts'][0];
+  //   print(posts);
+  //   posts.insert({'reminder': t});
+  //   notifyListeners();
+  // }
+
+  void changeDate(int cat_id, int post_id, Timestamp t, TimeOfDay _time) async {
     print("changeDate");
-    var s = FirebaseFirestore.instance.collection('users').doc(user_email);
-    DocumentSnapshot userSnapshot = await s.get();
-    var userData = userSnapshot.data() as Map;
-    var posts = userData['categories'][2]['posts'][0];
-    print(posts);
-    posts.insert({'reminder': t});
+    print(cat_id);
+    print(post_id);
+
+    categories.forEach((e) {
+      if (e['id'] == cat_id) {
+        e['posts'][post_id]['reminder'] = t;
+      }
+    });
+    userDocument.update({'categories': categories});
     notifyListeners();
   }
 
