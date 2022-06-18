@@ -553,7 +553,6 @@ class UserDB extends ChangeNotifier {
     print("changeDate");
     print(cat_id);
     print(post_id);
-
     categories.forEach((e) {
       if (e['id'] == cat_id) {
         e['posts'][post_id]['reminder'] = t;

@@ -95,16 +95,7 @@ class _private_postState extends State<private_post> {
                                     context: context,
                                     initialTime: TimeOfDay.now());
                                 time ??= TimeOfDay.now();
-                                // var input = DateFormat('MM/dd/yyyy, hh:mm a')
-                                //     .parse('12/31/2000, 10:00 PM');
-                                // var output = DateFormat('dd/MM/yyyy, HH:mm')
-                                //     .format(input);
-                                // Timestamp te = DateFormat('MM/dd/yyyy, hh:mm a')
-                                //     .parse('$value,$time') as Timestamp;
-                                //print(te);
-                                // var datetime = DateFormat('d.M.yyyy , HH:mm')
-                                //     .parse(value.toString());
-                                // print(datetime);
+                                print(value.toString());
                                 Provider.of<UserDB>(context, listen: false)
                                     .changeDate(widget.cat_id, widget.post_id,
                                         Timestamp.fromDate(value), time);
