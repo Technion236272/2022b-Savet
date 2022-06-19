@@ -61,7 +61,7 @@ dependencies:
   timezone: ^0.7.0
   clock: ^1.1.0
   intl: ^0.17.0
-
+  date_picker_timeline:
 
 dev_dependencies:
   flutter_test:

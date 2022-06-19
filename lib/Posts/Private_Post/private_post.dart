@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:savet/Posts/similar_content_card.dart';
 import 'package:savet/Posts/videoPlayer.dart';
@@ -34,8 +34,11 @@ class _private_postState extends State<private_post> {
     'https://cdn.pixabay.com/photo/2020/12/13/16/22/snow-5828736_960_720.jpg',
     'https://cdn.pixabay.com/photo/2020/12/09/09/27/women-5816861_960_720.jpg',
   ];
+  String _setTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
+
   @override
   Widget build(BuildContext context) {
+    print(_setTime);
     List posts = (widget.user != null)
         ? widget.user!['categories'][widget.cat_id]['posts']
         : Provider.of<UserDB>(context).categories[widget.cat_id]['posts'];
@@ -46,16 +49,25 @@ class _private_postState extends State<private_post> {
       'cat_id': widget.cat_id,
       'id': widget.post_id,
       'description': "",
-      'reminder': widget.date,
+      'date': widget.date,
+      'time': _setTime
     };
     for (var e in posts) {
       print(e['id']);
       if (e['id'] == widget.post_id) {
         post = e;
-        Timestamp te = e['reminder'];
-        widget.date =
-            DateTime.fromMicrosecondsSinceEpoch(te.microsecondsSinceEpoch);
-        break;
+        String te = e['date'];
+        print(te);
+        if (te != null && te != "") {
+          widget.date = DateFormat('MM/dd/yyyy').parse(te);
+          String t = e['time'];
+          if (t != null) _setTime = t;
+          // widget.date = DateFormat.yMd().format(e['reminder']);
+          //DateTime.tryParse(te);
+          print(widget.date);
+          print(widget.date);
+          break;
+        }
       }
     }
     return Scaffold(
@@ -67,8 +79,6 @@ class _private_postState extends State<private_post> {
                       PopupMenuItem(
                         child: TextButton(
                           onPressed: () async {
-                            print(widget.post_id);
-                            print(widget.cat_id);
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -83,7 +93,7 @@ class _private_postState extends State<private_post> {
                       PopupMenuItem(
                         child: TextButton(
                           onPressed: () async {
-                            print(widget.date);
+                            //print(widget.date);
                             await showDatePicker(
                                     context: context,
                                     initialDate: widget.date ?? DateTime.now(),
@@ -92,17 +102,27 @@ class _private_postState extends State<private_post> {
                                 .then((value) async {
                               if (value != null) {
                                 var time = await showTimePicker(
+                                    initialEntryMode: TimePickerEntryMode.input,
                                     context: context,
-                                    initialTime: TimeOfDay.now());
-                                time ??= TimeOfDay.now();
-                                print(value.toString());
-                                Provider.of<UserDB>(context, listen: false)
-                                    .changeDate(widget.cat_id, widget.post_id,
-                                        Timestamp.fromDate(value), time);
+                                    initialTime: TimeOfDay(
+                                      hour: int.parse(_setTime.split(":")[0]),
+                                      minute: int.parse(
+                                          _setTime.split(":")[1].split(" ")[0]),
+                                    ));
+                                if (time != null) {
+                                  Provider.of<UserDB>(context, listen: false)
+                                      .changeDate(
+                                          widget.cat_id,
+                                          widget.post_id,
+                                          DateFormat.yMd().format(value),
+                                          time.format(context));
 
-                                setState(() {
-                                  widget.date = value;
-                                });
+                                  setState(() {
+                                    _setTime = time.format(context);
+                                    print(value);
+                                    widget.date = value;
+                                  });
+                                }
                                 print(value);
                               }
                             });
@@ -237,5 +257,31 @@ class _private_postState extends State<private_post> {
             ],
           ),
         )));
+  }
+
+  Future<DateTime?> _getDateFromeUser() async {
+    print(widget.date);
+    DateTime? _pickerDate = await showDatePicker(
+        context: context,
+        initialDate: widget.date ?? DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2050));
+    if (_pickerDate != null) {
+      setState(() {
+        widget.date = _pickerDate;
+      });
+      return _pickerDate;
+    } else {
+      return null;
+    }
+  }
+
+  Future<DateTime?> _getTimeFromeUser() async {
+    print(widget.date);
+    var _time = await showTimePicker(
+      initialEntryMode: TimePickerEntryMode.input,
+      context: context,
+      initialTime: TimeOfDay(hour: 00, minute: 00),
+    );
   }
 }

@@ -443,7 +443,7 @@ class UserDB extends ChangeNotifier {
   }
 
   void addPost(String t, String d, String image_path, int c_i, bool videoFlag,
-      DateTime? date) async {
+      DateTime? date, String? time) async {
     final file = File(image_path);
     String c = image_path.hashCode.toString();
     final ref = await FirebaseStorage.instance.ref('$c');
@@ -462,7 +462,8 @@ class UserDB extends ChangeNotifier {
           'id': post_id,
           'cat_id': c_i,
           'videoFlag': videoFlag,
-          'reminder': date
+          'date': date,
+          'time': time
         });
         tot_posts++;
         categories[0]['posts'].insert(0, {
@@ -472,7 +473,8 @@ class UserDB extends ChangeNotifier {
           'id': post_id,
           'cat_id': c_i,
           'videoFlag': videoFlag,
-          'reminder': date
+          'date': date,
+          'time': time
         });
         if (tot_posts > 20) {
           categories[0]['posts'].removeLast();
@@ -549,13 +551,14 @@ class UserDB extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void changeDate(int cat_id, int post_id, Timestamp t, TimeOfDay _time) async {
+  void changeDate(int cat_id, int post_id, String date, String _time) async {
     print("changeDate");
-    print(cat_id);
-    print(post_id);
+    print(_time);
+
     categories.forEach((e) {
       if (e['id'] == cat_id) {
-        e['posts'][post_id]['reminder'] = t;
+        e['posts'][post_id]['date'] = date;
+        e['posts'][post_id]['time'] = _time;
       }
     });
     userDocument.update({'categories': categories});
