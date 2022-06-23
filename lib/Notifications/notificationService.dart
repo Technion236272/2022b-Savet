@@ -41,8 +41,7 @@ class NotificationService {
       body,
       tz.TZDateTime.now(tz.local).add(Duration(seconds: seconds)),
       const NotificationDetails(
-        android: AndroidNotificationDetails(
-            'main_channel', 'Main Channel', 'Main channel notifications',
+        android: AndroidNotificationDetails('main_channel', 'Main Channel',
             importance: Importance.max,
             priority: Priority.max,
             icon: '@drawable/ic_flutternotification'),

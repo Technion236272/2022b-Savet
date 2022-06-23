@@ -7,8 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:savet/Posts/Post/Reactions.dart';
 import 'package:savet/Posts/similar_content_card.dart';
 import 'package:savet/Posts/videoPlayer.dart';
+//import 'package:schedule_local_notification/notificationservice.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
+import '../../Notifications/notificationsHelper.dart';
 import '../../Services/user_db.dart';
+import '../../main.dart';
 import '../edit_post.dart';
 import '../similar_content.dart';
 
@@ -34,6 +38,11 @@ class _postPageState extends State<postPage> {
   List arr = [];
 
   String _setTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
+
+  void initState() {
+    super.initState();
+    tz.initializeTimeZones();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,15 +73,15 @@ class _postPageState extends State<postPage> {
     for (var e in posts) {
       if (e['id'] == widget.post_id) {
         post = e;
-        String te = e['date'];
+        var te = e['date']; //.toDate();
+        print(e);
         print(te);
-        if (te != null && te != "") {
-          widget.date = DateFormat('MM/dd/yyyy').parse(te);
+        if (te != null && te != "" && widget.date == null) {
+          widget.date = te.toDate(); //DateFormat('MM/dd/yyyy').parse(te);
           String t = e['time'];
           if (t != null) _setTime = t;
           // widget.date = DateFormat.yMd().format(e['reminder']);
           //DateTime.tryParse(te);
-          print(widget.date);
           print(widget.date);
           break;
         }
@@ -149,9 +158,25 @@ class _postPageState extends State<postPage> {
                                             .changeDate(
                                                 widget.cat_id,
                                                 widget.post_id,
-                                                DateFormat.yMd().format(value),
+                                                DateTime(
+                                                    value.year,
+                                                    value.month,
+                                                    value.day,
+                                                    time.hour,
+                                                    time.minute),
                                                 time.format(context));
-
+                                        scheduleNotification(
+                                            notifsPlugin,
+                                            " ",
+                                            "Reminder from Savet",
+                                            "category: ${widget.cat_id} ,post: ${widget.post_id}",
+                                            DateTime(
+                                                value.year,
+                                                value.month,
+                                                value.day,
+                                                time.hour,
+                                                time.minute),
+                                            0);
                                         setState(() {
                                           _setTime = time.format(context);
                                           print(value);
@@ -456,5 +481,28 @@ class _postPageState extends State<postPage> {
     }
 
     arr.removeWhere((post) => post['id'] == widget.post_id);
+  }
+
+  String readTimestamp(int timestamp) {
+    var now = new DateTime.now();
+    var format = new DateFormat('HH:mm a');
+    var date = new DateTime.fromMicrosecondsSinceEpoch(timestamp * 1000);
+    var diff = date.difference(now);
+    var time = '';
+
+    if (diff.inSeconds <= 0 ||
+        diff.inSeconds > 0 && diff.inMinutes == 0 ||
+        diff.inMinutes > 0 && diff.inHours == 0 ||
+        diff.inHours > 0 && diff.inDays == 0) {
+      time = format.format(date);
+    } else {
+      if (diff.inDays == 1) {
+        time = diff.inDays.toString() + 'DAY AGO';
+      } else {
+        time = diff.inDays.toString() + 'DAYS AGO';
+      }
+    }
+
+    return time;
   }
 }
