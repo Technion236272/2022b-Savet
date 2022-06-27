@@ -2,7 +2,7 @@
 
 > Savet is an app that combines saved collections from multiple social media platforms into one place.
 
-<a href='https://play.google.com/store/apps/details?id=com.mikimn.android_course&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width='258.5' height='100'/></a>
+<a href='https://play.google.com/store/apps/details?id=com.technion.savet'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width='258.5' height='100'/></a>
 
 ## Motivation
 
